@@ -1,67 +1,54 @@
-# Lab 6. Assignment 2
+# Lab 6, Assignment 4
 
 .data
 	A: .word 7, -2, 5, 1, 5, 6, 7, 3, 6, 8, 8, 59, 5
-	Aend: .word
-	
+	n: .word 13			# n = length
+
 .text
-main:	
-	la $a0, A		# $a0 = Address(A[0])
-	la $a1, Aend
-	addi $a1, $a1, -4	# $a1 = Address(A[n-1])
-	j sort			# sort
-	
-after_sort:
-	li $v0, 10		# exit
-	syscall
-	
+main: 	
+	la $s0, A 		# s0 = Address of A
+	la $t1, n
+ 	lw $s1, 0($t1) 		# s1 = n
+ 	li $t8, 0		# t8 = i = 0
+ 	j insertion_sort 	# sort
+
+after_sort: 	
+	li $v0, 10 		# exit
+ 	syscall
+ 	
 end_main:
 
-# --------------------------------------------------------------
-# procedure sort (ascending selection sort using pointer)
-# register usage in sort program
-# $a0 pointer to the first element in unsorted part
-# $a1 pointer to the last element in unsorted part
-# $t0 temporary place for value of last element
-# $v0 pointer to max element in unsorted part
-# $v1 value of max element in unsorted part
-# --------------------------------------------------------------
+insertion_sort: 	
+	
+i_loop:		
+	addi $t8, $t8, 1	# i = i+1
+	beq $t8,$s1,done 	# i = n -> single element list is sorted
+	add $t0, $t8, $t8	# t0 = 2i
+	add $t0, $t0, $t0	# t0 = 4i
+	add $t6, $s0, $t0	# t6 = address of the Key
+	lw $t7, 0($t6)		# t7 = Key
+	subi $t9, $t8, 1	# j = i-1 
+ 	j while		
 
-sort:		
-	beq $a0, $a1, done		# single element list is sorted
-	j max				# call the max procedure
-	
-after_max:
-	lw $t0, 0($a1)			# load last element into $t0
-	sw $t0, 0($v0)			# copy last element to max location
-	sw $v1, 0($a1)			# copy max value to last element
-	addi $a1, $a1, -4		# decrement pointer to last element
-	j sort				# repeat sort for smaller list
-	
-done:
+done: 	
 	j after_sort
 	
-# ------------------------------------------------------------------------
-# Procedure max
-# function: fax the value and address of max element in the list
-# $a0 pointer to first element
-# $a1 pointer to last element
-# ------------------------------------------------------------------------
-
-max:
-	addi $v0, $a0, 0		# init max pointer to first element
-	lw $v1, 0($v0)			# init max value to first value
-	addi $t0, $a0, 0		# init next pointer to first
+while:		
+	add $t1, $t9, $t9		# t0 = 2j
+	add $t1, $t1, $t1		# t0 = 4j
+	add $t2, $s0, $t1 		# t2 = address of A[j]
+	lw $t3, 0($t2)			# t3 = A[j]
+	slt $s6, $t7, $t3		# (key < A[j]) ?
+	sge $s5, $t9, $zero 		# (j >= 0) ?
+	and $s7, $s5, $s6		# s7 = (j >= 0 && A[j] > key)
+	beq $s7, $zero, end_of_while 
+	add $t4, $t2, 4			# t4 = address of A[j+1]
+	sw $t3, 0($t4)			# A[j+1] = A[j]
+	subi $t9, $t9, 1		# j = j - 1 
+	j while	
 	
-loop:
-	beq $t0, $a1, ret		# if next=last, return
-	addi $t0, $t0, 4		# advance to next element
-	lw $t1, 0($t0)			# load next element into $t1
-	slt $t2, $t1, $v1		# (next)<(max) ?
-	bne $t2, $zero, loop		# if (next)<(max), repeat
-	addi $v0, $t0, 0		# next element is new max element
-	addi $v1, $t1, 0		# next value is new max value
-	j loop				# change completed; now repeat
-	
-ret:
-	j after_max
+end_of_while:	
+	add $t4, $t2, 4		# t4 = address of A[j+1]
+	sw $t7, 0($t4)		# A[j+1] = Key
+	j i_loop	
+		
