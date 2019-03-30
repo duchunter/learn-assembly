@@ -2,7 +2,7 @@
 
 .data
 	A: .word 7, -2, 5, 1, 5, 6, 7, 3, 6, 8, 8, 59, 5
-	n: .word 13			# n = length
+	n: .word 13		# n = length
 
 .text
 main: 	
@@ -21,13 +21,13 @@ end_main:
 insertion_sort: 	
 	
 i_loop:		
-	addi $t8, $t8, 1	# i = i+1
-	beq $t8,$s1,done 	# i = n -> single element list is sorted
+	addi $t8, $t8, 1	# i = i + 1
+	beq $t8, $s1, done 	# i = n -> end reached
 	add $t0, $t8, $t8	# t0 = 2i
 	add $t0, $t0, $t0	# t0 = 4i
-	add $t6, $s0, $t0	# t6 = address of the Key
-	lw $t7, 0($t6)		# t7 = Key
-	subi $t9, $t8, 1	# j = i-1 
+	add $t6, $s0, $t0	# t6 = address of index i
+	lw $t7, 0($t6)		# t7 = value of index i
+	subi $t9, $t8, 1	# j = i - 1 
  	j while		
 
 done: 	

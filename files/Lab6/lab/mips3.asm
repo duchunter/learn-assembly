@@ -22,8 +22,8 @@ end_main:
 bubble_sort: 	
 	
 i_loop:		
-	addi $t8, $t8, 1	# i = i+1
-	beq $t8, $s1, done 	# i = n-1 -> single element list is sorted
+	addi $t8, $t8, 1	# i = i + 1
+	beq $t8, $s1, done 	# i = n - 1 -> list is sorted
  	j j_loop 		
 
 done: 		
@@ -31,11 +31,11 @@ done:
 
 j_loop:		
 	li $t9, -1		# t9 = j = -1
-	sub $t7, $s1, $t8	# t7 = n-i-1
+	sub $t7, $s1, $t8	# t7 = n - i - 1
 	
 continue:	
-	addi $t9, $t9, 1	# j = j+1
-	beq $t9, $t7, i_loop	# if j = n-i-1 -> break -> go to i loop
+	addi $t9, $t9, 1	# j = j + 1
+	beq $t9, $t7, i_loop	# if j = n - i - 1 -> break -> go to i loop
 	add $t0, $t9, $t9 	# t0 = 2j
  	add $t0, $t0, $t0	# t0 = 4j
  	add $t1, $s0, $t0	# t1 = address of A[j]
