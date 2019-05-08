@@ -15,8 +15,8 @@
 	# Variable
 	string: .space 20		# Max name length
 	nb_student: .word 0		# Number of student
-	name_list: .space 1600		# 20 student * max name length * 4 bytes per word
-	mark_list: .space 80		# 20 student * 4 bytes per mark
+	name_list: .space 400		# 20 student * max name length
+	mark_list: .space 20		# 20 student
 	
 
 .text
@@ -178,6 +178,7 @@ input_num:
 input_num_check:
 	beq $a1, $a3, end		# If Cancel was chosen, quit the program
 	bnez $a1, input_num_error	# If not sucess (status a1 != 0) ask for input again
+	bltz $a0, input_num_error	# If entered value < 0 ask for input again
 	j input_num_end			# Success -> end
 
 input_num_error:
