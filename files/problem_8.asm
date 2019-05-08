@@ -6,8 +6,9 @@
 .data
 	# String constant
 	Nb_student: .asciiz "Enter the number of student in class: "
-	Input_Name: .asciiz "Enter name: "
-	Input_Mark: .asciiz "Enter mark: "
+	Input_name: .asciiz "Enter name: "
+	Input_mark: .asciiz "Enter mark: "
+	Invalid_input: .asciiz "Invalid input, try again: "
 	Name: .asciiz "\n\nName: "
 	Mark: .asciiz "Mark: "
 	
@@ -36,7 +37,7 @@ get_data_loop:
 	# Get data of 1 student: v0, a0, a1, a2, f0 occupied
 	jal input_name			# name now in string
 	jal input_mark			# mark now in f0
-	bnez $a1, end
+	#bnez $a1, end
 	# v0, a0, a1, a2 free
 	
 	# Copy name to list: s0, a0, a1, a2, t1, t2, t3, t4, t5 occupied
@@ -166,38 +167,76 @@ print_all_end:
 
 
 # Input number of student
-# Ocuppy v0, a0, a1, a2
+# Ocuppy v0, a0, a1, a2, a3
 # Ouput: a0 int value, a1 int status
 input_num:
+	li $a3, -2			# Status that Cancel was chosen
 	li $v0, 51
 	la $a0, Nb_student
 	syscall
+
+input_num_check:
+	beq $a1, $a3, end		# If Cancel was chosen, quit the program
+	bnez $a1, input_num_error	# If not sucess (status a1 != 0) ask for input again
+	j input_num_end			# Success -> end
+
+input_num_error:
+	la $a0, Invalid_input
+	syscall
+	j input_num_check
+
+input_num_end:
 	la $a2, nb_student
 	sw $a0, 0($a2)
 	jr $ra
 
 
 # Input name
-# Ocuppy v0, a0, a1, a2
+# Ocuppy v0, v1, a0, a1, a2
 # Output: string, a1 int status
 input_name:
 	li $v0, 54
-	la $a0, Input_Name
+	la $a0, Input_name
 	la $a1, string
 	la $a2, 20
+	li $v1, -2			# Status that Cancel was chosen
 	syscall
+
+input_name_check:
+	beq $a1, $v1, end		# If Cancel was chosen, quit the program
+	bnez $a1, input_name_error	# If not sucess (status a1 != 0) ask for input again
+	j input_name_end		# Success -> end
+
+input_name_error:
+	la $a0, Invalid_input
+	la $a1, string
+	syscall
+	j input_name_check
+
+input_name_end:
 	jr $ra
 
-
 # Input mark
-# Ocuppy v0, f0, a1
+# Ocuppy v0, v1, f0, a1
 # Ouput f0 float, a1 int status
 input_mark:
 	li $v0, 52
-	la $a0, Input_Mark
+	la $a0, Input_mark
+	li $v1, -2			# Status that Cancel was chosen
 	syscall
-	jr $ra
-	
+
+input_mark_check:
+	beq $a1, $v1, end		# If Cancel was chosen, quit the program
+	bnez $a1, input_mark_error	# If not sucess (status a1 != 0) ask for input again
+	j input_mark_end		# Success -> end
+
+input_mark_error:
+	la $a0, Invalid_input
+	syscall
+	j input_mark_check
+
+input_mark_end:
+	jr $ra	
 	
 # Name copy
 # Ocuppy s0, s1, t1, t2, t3
