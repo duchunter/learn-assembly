@@ -23,7 +23,7 @@ main:
 # Loop an print sequence numbers
 #---------------------------------------------------------
 
-	xor $s0, $s0, $s0			 # count = $s0 = 0
+	xor $s0, $s0, $s0			# count = $s0 = 0
 Loop:
 	addi $s0, $s0, 1			# count = count + 1
 prn_seq:
@@ -56,16 +56,22 @@ end_main:
 IntSR:
 	addi $sp,$sp,4				# Save $ra because we may change it later
 	sw  $ra,0($sp)
-	addi $sp,$sp,4				# Save $ra because we may change it later
+	addi $sp,$sp,4				# Save $at because we may change it later
 	sw $at,0($sp)
-	addi $sp,$sp,4				# Save $ra because we may change it later
+	addi $sp,$sp,4				# Save $v0 because we may change it later
 	sw $v0,0($sp)
 	addi $sp,$sp,4				# Save $a0, because we may change it later
 	sw $a0,0($sp)				
 	addi $sp,$sp,4				# Save $t1, because we may change it later
 	sw $t1,0($sp)
 	addi $sp,$sp,4				# Save $t3, because we may change it later
-	sw $t3,0($sp)	
+	sw $t3,0($sp)
+	addi $sp,$sp,4				# Save $t4, because we may change it later
+	sw $t4,0($sp)
+	addi $sp,$sp,4				# Save $t5, because we may change it later
+	sw $t5,0($sp)
+	addi $sp,$sp,4				# Save $t6, because we may change it later
+	sw $t6,0($sp)	
 #--------------------------------------------------------
 # Processing
 #--------------------------------------------------------
@@ -76,15 +82,39 @@ prn_msg:
 	syscall
 get_cod:
 	li	$t1, 	IN_ADRESS_HEXA_KEYBOARD
-	li	$t3,	0x88			# check row 4 and re-enable bit 7
-	sb	$t3,	0($t1)			# must reassign expected row
+	li	$t3,	0x81
+	sb	$t3,	0($t1)
 	li 	$t1, 	OUT_ADRESS_HEXA_KEYBOARD
 	lb	$a0,	0($t1)
+	bne 	$a0, 	$zero, 	prn_cod
+	
+	li	$t1, 	IN_ADRESS_HEXA_KEYBOARD
+	li	$t4,	0x82
+	sb	$t4,	0($t1)
+	li 	$t1, 	OUT_ADRESS_HEXA_KEYBOARD
+	lb	$a0,	0($t1)
+	bne 	$a0, 	$zero, 	prn_cod
+	
+	li	$t1, 	IN_ADRESS_HEXA_KEYBOARD
+	li	$t5,	0x84
+	sb	$t5,	0($t1)
+	li 	$t1, 	OUT_ADRESS_HEXA_KEYBOARD
+	lb	$a0,	0($t1)
+	bne 	$a0, 	$zero, 	prn_cod
+	
+	li	$t1, 	IN_ADRESS_HEXA_KEYBOARD
+	li	$t6,	0x88
+	sb	$t6,	0($t1)
+	li 	$t1, 	OUT_ADRESS_HEXA_KEYBOARD
+	lb	$a0,	0($t1)
+	bne 	$a0, 	$zero, 	prn_cod
+	
+	j next_pc
 	
 prn_cod:
-	li	$v0,34
+	li	$v0, 34
 	syscall
-	li	$v0,11
+	li	$v0, 11
 	li	$a0,'\n'			# print endofline
 	syscall
 #--------------------------------------------------------
@@ -101,7 +131,13 @@ next_pc:
 #--------------------------------------------------------
 
 restore:
-	lw	$t3, 0($sp)			#Restore the registers from stack
+	lw	$t6, 0($sp)			# Restore the registers from stack
+	addi	$sp,$sp,-4
+	lw	$t5, 0($sp)			# Restore the registers from stack
+	addi	$sp,$sp,-4
+	lw	$t4, 0($sp)			# Restore the registers from stack
+	addi	$sp,$sp,-4
+	lw	$t3, 0($sp)			# Restore the registers from stack
 	addi	$sp,$sp,-4
 	lw	$t1, 0($sp)			# Restore the registers from stack
 	addi	$sp,$sp,-4

@@ -4,12 +4,15 @@
 .eqv	DISPLAY_CODE 0xFFFF000C # ASCII code to show, 1 byte
 .eqv	DISPLAY_READY 0xFFFF0008 # =1 if the display has already to do
  # Auto clear after sw
+.eqv	EXIT	27
 .text
 	li $k0, KEY_CODE
 	li $k1, KEY_READY
 
 	li $s0, DISPLAY_CODE
 	li $s1, DISPLAY_READY
+	
+	li $s2, EXIT
 loop: nop
 
 WaitForKey:	lw $t1, 0($k1) # $t1 = [$k1] = KEY_READY
@@ -18,6 +21,7 @@ WaitForKey:	lw $t1, 0($k1) # $t1 = [$k1] = KEY_READY
 		nop
  #-----------------------------------------------------
 ReadKey:	lw $t0, 0($k0) # $t0 = [$k0] = KEY_CODE
+		beq $t0, $s2, end
 		nop
  #-----------------------------------------------------
 WaitForDis:	lw $t2, 0($s1) # $t2 = [$s1] = DISPLAY_READY
@@ -32,3 +36,5 @@ ShowKey: 	sw $t0, 0($s0) # show key
  #-----------------------------------------------------
 		j loop
 		nop
+
+end:

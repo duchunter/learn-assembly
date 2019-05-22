@@ -16,49 +16,38 @@ main:	jal TRACK # draw track line
 	nop
 	jal GO
 	nop
-sleep1: addi $v0, $zero, 32 # Keep running by sleeping in 1000 ms
-	li $a0,1000
+sleep1: addi $v0, $zero, 32 # Keep running by sleeping in 6000 ms
+	li $a0, 6000
 	syscall
 
 	jal UNTRACK # keep old track
 	nop
 	jal TRACK # and draw new track line
 	nop
-goDOWN: addi $a0, $zero, 180 # Marsbot rotates 180*
+goDOWN: addi $a0, $zero, 210 # Marsbot rotates 230*
 	jal ROTATE
 	nop
 
-sleep2: addi $v0,$zero,32 # Keep running by sleeping in 2000 ms
-	li $a0,2000
+sleep2: addi $v0,$zero,32 # Keep running by sleeping in 3000 ms
+	li $a0,3000
 	syscall
 	jal UNTRACK # keep old track
 	nop
 	jal TRACK # and draw new track line
 	nop
-goLEFT: addi $a0, $zero, 270 # Marsbot rotates 270*
+goLEFT: addi $a0, $zero, 330 # Marsbot rotates 300*
 	jal ROTATE
 	nop
 
-sleep3: addi $v0,$zero,32 # Keep running by sleeping in 1000 ms
-	li $a0,1000
+sleep3: addi $v0,$zero,32 # Keep running by sleeping in 3000 ms
+	li $a0,3000
 	syscall
-	jal UNTRACK # keep old track
+	jal UNTRACK
 	nop
-	jal TRACK # and draw new track line
+	jal STOP
 	nop
-
-goASKEW:addi $a0, $zero, 120 # Marsbot rotates 120*
-	jal ROTATE
-	nop
-
-sleep4: addi $v0,$zero,32 # Keep running by sleeping in 2000 ms
-	li $a0,2000
-	syscall
-
-	jal UNTRACK # keep old track
-	nop
-	jal TRACK # and draw new track line
-	nop
+	j end
+	
 end_main:
 
 #-----------------------------------------------------------
@@ -114,3 +103,5 @@ ROTATE:
 	nop
 	jr $ra
 	nop
+
+end:
