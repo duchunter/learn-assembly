@@ -16,7 +16,7 @@
 	string: .space 20		# Max name length
 	nb_student: .word 0		# Number of student
 	name_list: .space 400		# 20 student * max name length
-	mark_list: .space 20		# 20 student
+	mark_list: .space 80		# 20 student
 	
 
 .text
@@ -95,7 +95,7 @@ bubble_sort_j_loop:
  	
  	# if mark[j] <= mark[j + 1] -> continue, otherwise -> swap
  	c.le.s $f0, $f1
- 	bc1t bubble_sort_i_loop
+ 	bc1t bubble_sort_j_loop
  	
  	# Swap mark
 	s.s $f0, 4($a2)
